@@ -5,8 +5,8 @@
 # Dev
 
 1. Clonar el proyecto
-1. Copiar el ```env.template``` y renombrar a ```.env```
-2. Ejecutar
+2. Copiar el ```env.template``` y renombrar a ```.env```
+3. Ejecutar
 ```
 npm install
 ```
