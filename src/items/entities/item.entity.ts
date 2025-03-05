@@ -12,13 +12,13 @@ export class Item {
   @Field(() => String)
   name: string;
 
-  @Field(() => Float)
   @Column()
+  @Field(() => Float)
   quantity: number;
 
-  @Field(() => String)
-  @Column()
-  quantityUnits: string; // g, ml, kg, tsp
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  quantityUnits?: string; // g, ml, kg, tsp
 
   //stores
   //user
