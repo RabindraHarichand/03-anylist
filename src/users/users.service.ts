@@ -1,12 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserInput } from './dto/create-user.input';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { UpdateUserInput } from './dto/update-user.input';
 import { User } from './entities/user.entity';
+import { SignupInput } from '../auth/dto/inputs/signup.input';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
-  create(createUserInput: CreateUserInput) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<User>,
+  ) {}
+
+  async create(signupInput: SignupInput): Promise<User> {
+    try {
+      const newUser = this.usersRepository.create(signupInput);
+
+      return this.usersRepository.save(newUser);
+    } catch (error) {
+      console.log(error);
+
+      throw new BadRequestException('Algo salio mal');
+    }
   }
 
   async findAll(): Promise<User[]> {
