@@ -17,7 +17,7 @@ export class User {
   email: string;
 
   @Column()
-  password: string;
+  password?: string;
 
   @Column({ type: 'text', array: true, default: ['user'] })
   @Field(() => [String])

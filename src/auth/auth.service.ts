@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthResponse } from './types/auth-response.type';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -34,7 +38,7 @@ export class AuthService {
     const { email, password } = loginInput;
     const user = await this.usersService.findOneByEmail(email);
 
-    if (!bcrypt.compareSync(password, user.password)) {
+    if (!bcrypt.compareSync(password, user.password!)) {
       throw new BadRequestException('Email/Password do not match');
     }
 
@@ -46,5 +50,15 @@ export class AuthService {
       token,
       user,
     };
+  }
+
+  async validateUser(id: string): Promise<User> {
+    const user = await this.usersService.findOneById(id);
+
+    if (!user.isActive)
+      throw new UnauthorizedException('User is inactive, talk with an admin');
+
+    delete user.password;
+    return user;
   }
 }
