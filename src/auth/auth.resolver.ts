@@ -7,6 +7,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { ValidRoles } from './enums/valid-roles.enum';
 
 @Resolver()
 export class AuthResolver {
@@ -28,7 +29,9 @@ export class AuthResolver {
 
   @Query(() => AuthResponse, { name: 'revalidate' })
   @UseGuards(JwtAuthGuard)
-  async revalidateToken(@CurrentUser() user: User): Promise<AuthResponse> {
+  async revalidateToken(
+    @CurrentUser(/**[ValidRoles.admin]**/) user: User,
+  ): Promise<AuthResponse> {
     return this.authService.revalidateToken(user);
   }
 }
