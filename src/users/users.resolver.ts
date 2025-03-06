@@ -15,7 +15,9 @@ export class UsersResolver {
 
   @Query(() => User, { name: 'user' })
   findOne(@Args('id', { type: () => ID }) id: string): Promise<User> {
-    return this.usersService.findOne(id);
+    // return this.usersService.findOne(id);
+    //TODO
+    throw new Error('No implementado');
   }
 
   // @Mutation(() => User)
