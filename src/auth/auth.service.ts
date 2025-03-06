@@ -4,17 +4,25 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { SignupInput, LoginInput } from './dto/inputs';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  private getJwToken(userId: string) {
+    return this.jwtService.sign({ id: userId });
+  }
 
   async signup(signupInput: SignupInput): Promise<AuthResponse> {
     //TODO crear usuario
     const user = await this.usersService.create(signupInput);
 
     //TODO JWT
-    const token = 'ABC123';
+    const token = this.getJwToken(user.id);
 
     return {
       token,
@@ -32,7 +40,7 @@ export class AuthService {
 
     //TODO: JWT
 
-    const token = 'ABC123';
+    const token = this.getJwToken(user.id);
 
     return {
       token,
