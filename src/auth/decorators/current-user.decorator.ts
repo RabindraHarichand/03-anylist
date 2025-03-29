@@ -8,10 +8,14 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { ValidRoles } from '../enums/valid-roles.enum';
 import { User } from 'src/users/entities/user.entity';
 
+interface RequestWithUser extends Request {
+  user: User;
+}
+
 export const CurrentUser = createParamDecorator(
   (roles: ValidRoles[] = [], context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
-    const user: User = ctx.getContext().req.user;
+    const user: User = ctx.getContext<{ req: RequestWithUser }>().req.user;
 
     if (!user) {
       throw new InternalServerErrorException(
@@ -28,7 +32,7 @@ export const CurrentUser = createParamDecorator(
     }
 
     throw new ForbiddenException(
-      `User ${user.fullName} need a valid role [${roles}]`,
+      `User ${user.fullName} need a valid role [${roles.join(', ')}]`,
     );
   },
 );

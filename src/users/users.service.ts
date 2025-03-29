@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   Injectable,
@@ -31,7 +32,7 @@ export class UsersService {
       });
       return await this.usersRepository.save(newUser);
     } catch (error) {
-      this.handleDBErrors(error);
+      this.handleDBErrors(error as { code: string; detail: string });
     }
   }
 
@@ -74,7 +75,7 @@ export class UsersService {
     throw new Error('block not implemented');
   }
 
-  private handleDBErrors(error: any): never {
+  private handleDBErrors(error: { code: string; detail: string }): never {
     if (error.code === '23505') {
       throw new BadRequestException(error.detail.replace('Key', ''));
     }

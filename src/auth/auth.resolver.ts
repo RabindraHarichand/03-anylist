@@ -3,11 +3,9 @@ import { AuthService } from './auth.service';
 import { AuthResponse } from './types/auth-response.type';
 import { SignupInput, LoginInput } from './dto/inputs';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { CurrentUser } from './decorators/current-user.decorator';
-import { ValidRoles } from './enums/valid-roles.enum';
 
 @Resolver(() => AuthResponse)
 export class AuthResolver {
@@ -29,6 +27,7 @@ export class AuthResolver {
 
   @Query(() => AuthResponse, { name: 'revalidate' })
   @UseGuards(JwtAuthGuard)
+  // eslint-disable-next-line @typescript-eslint/require-await
   async revalidateToken(
     @CurrentUser(/**[ValidRoles.admin]**/) user: User,
   ): Promise<AuthResponse> {
