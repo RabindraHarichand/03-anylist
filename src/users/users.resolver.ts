@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { ValidRolesArgs } from './dto/args/roles.arg';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { UseGuards } from '@nestjs/common';
+import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
 
@@ -23,10 +23,11 @@ export class UsersResolver {
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => ID }) id: string): Promise<User> {
-    // return this.usersService.findOne(id);
-    //TODO
-    throw new Error('No implementado');
+  findOne(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser([ValidRoles.admin]) user: User,
+  ): Promise<User> {
+    return this.usersService.findOneById(id);
   }
 
   // @Mutation(() => User)
@@ -34,8 +35,11 @@ export class UsersResolver {
   //   return this.usersService.update(updateUserInput.id, updateUserInput);
   // }
 
-  @Mutation(() => User)
-  blockUser(@Args('id', { type: () => ID }) id: string): Promise<User> {
+  @Mutation(() => User, { name: 'blockUser' })
+  blockUser(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser([ValidRoles.admin]) user: User,
+  ): Promise<User> {
     return this.usersService.block(id);
   }
 }
